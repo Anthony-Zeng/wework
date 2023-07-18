@@ -10,6 +10,8 @@ module Wework
       include Methods::Tag
       include Methods::Crm
       include Methods::Batch
+      include Methods::Kf
+      include Methods::KfChat
 
       attr_accessor :corp_id, :secret, :options
 

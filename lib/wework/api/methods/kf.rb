@@ -15,15 +15,6 @@ module Wework
           })
         end
 
-        def send_msg(touser:, open_kfid:, msgtype:, msgid: nil, ext: {})
-          post('/kf/send_msg', {
-            touser: touser,
-            open_kfid: open_kfid,
-            msgid: msgid,
-            msgtype: msgtype,
-          }.merge(ext))
-        end
-
         def account_list(offset: 0, limit: 50)
           post('/kf/account/list', {
             offset: offset,
