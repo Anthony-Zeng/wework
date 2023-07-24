@@ -15,12 +15,12 @@ module Wework
           })
         end
 
-        def send_msg_on_event(code:, msgid: nil, msgtype:)
+        def send_msg_on_event(code:, msgid: nil, msgtype:, content: {})
           post('/kf/send_msg_on_event', {
             code: code,
             msgid: msgid,
-            msgtype: msgtype
-          })
+            msgtype: msgtype,
+          }.merge(content))
         end
 
         def account_list(offset: 0, limit: 50)
