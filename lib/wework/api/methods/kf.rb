@@ -23,6 +23,7 @@ module Wework
           }.merge(content))
         end
 
+        # 客服账号管理
         def account_list(offset: 0, limit: 50)
           post('/kf/account/list', {
             offset: offset,
@@ -34,6 +35,27 @@ module Wework
           post('/kf/account/add', {
             name: name,
             media_id: media_id
+          })
+        end
+
+        def account_update(open_kfid:, name: nil, media_id: nil)
+          post('/kf/account/update', {
+            open_kfid: open_kfid,
+            name: name,
+            media_id: media_id
+          })
+        end
+
+        def account_del(open_kfid:)
+          post('/kf/account/del', {
+            open_kfid: open_kfid
+          })
+        end
+
+        def add_contact_way(open_kfid:, scene: nil)
+          post('/kf/add_contact_way', {
+            open_kfid: open_kfid,
+            scene: scene
           })
         end
 
