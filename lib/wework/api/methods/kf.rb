@@ -15,12 +15,24 @@ module Wework
           })
         end
 
-        def send_msg_on_event(code:, msgid: nil, msgtype:, content: {})
-          post('/kf/send_msg_on_event', {
+        def send_text_msg_on_event(code:, msgid: nil, content:)
+          post '/kf/send_msg_on_event', {
             code: code,
             msgid: msgid,
-            msgtype: msgtype,
-          }.merge(content))
+            msgtype: 'text',
+            text: {
+              content: content
+            }
+          }.compact
+        end
+
+        def send_menu_msg_on_event(code: ,msgid: nil, msgmenu:)
+          post '/kf/send_msg_on_event', {
+            code: code,
+            msgid: msgid,
+            msgtype: 'msgmenu',
+            msgmenu: msgmenu
+          }.compact
         end
 
         # 客服账号管理
