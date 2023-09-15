@@ -23,7 +23,7 @@ module Wework
       end
 
       def request
-        @request ||= Wework::Request.new(API_ENDPOINT, false)
+        @request ||= Wework::Request.new(false)
       end
 
       def valid?

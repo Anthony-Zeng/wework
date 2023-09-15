@@ -4,11 +4,10 @@ require 'wework/global_code'
 
 module Wework
   class Request
-    attr_reader :base, :ssl_context, :httprb
+    attr_reader :ssl_context, :http
 
-    def initialize(base, skip_verify_ssl)
-      @base = base
-      @httprb = HTTP.timeout(**Wework.http_timeout_options)
+    def initialize(skip_verify_ssl)
+      @http = HTTP.timeout(**Wework.http_timeout_options)
       @ssl_context = OpenSSL::SSL::SSLContext.new
       @ssl_context.ssl_version = :TLSv1_2
       @ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE if skip_verify_ssl
@@ -17,43 +16,44 @@ module Wework
     def get(path, get_header = {})
       request(path, get_header) do |url, header|
         params = header.delete(:params)
-        httprb.headers(header).get(url, params: params, ssl_context: ssl_context)
+        http.headers(header).get(url, params: params, ssl_context: ssl_context)
       end
     end
 
     def post(path, post_body, post_header = {})
       request(path, post_header) do |url, header|
         params = header.delete(:params)
-        httprb.headers(header).post(url, params: params, json: post_body, ssl_context: ssl_context)
+        http.headers(header).post(url, params: params, json: post_body, ssl_context: ssl_context)
       end
     end
 
     def post_file(path, file, post_header = {})
       request(path, post_header) do |url, header|
         params = header.delete(:params)
-        httprb.headers(header)
-          .post(url, params: params,
-                     form: { media: HTTP::FormData::File.new(file),
-                             hack: 'X' }, # Existing here for http-form_data 1.0.1 handle single param improperly
-                     ssl_context: ssl_context)
+        http.headers(header)
+            .post(url, params: params,
+                  form: { media: HTTP::FormData::File.new(file),
+                          hack: 'X' }, # Existing here for http-form_data 1.0.1 handle single param improperly
+                  ssl_context: ssl_context)
       end
     end
 
     private
 
     def request(path, header = {}, &_block)
-      url_base = header.delete(:base) || base
+      url = URI.join(Wework.api_base_url, path)
+
       as = header.delete(:as)
       header['Accept'] = 'application/json'
       dup_header = header.dup
-      response = yield("#{url_base}#{path}", header)
+      response = yield(url, header)
       raise ResponseError.new(response.status) unless HTTP_OK_STATUS.include?(response.status)
 
       parse_response(response, as || :json) do |parse_as, data|
         break data unless parse_as == :json
         result = Wework::Result.new(data)
         if defined?(Rails.logger) && Rails.logger
-          Rails.logger.debug "[WEWORK] request path(#{url_base}#{path}); request params: #{dup_header.inspect}; response: #{result.inspect}"
+          Rails.logger.debug "[WEWORK] request path(#{url}); request params: #{dup_header.inspect}; response: #{result.inspect}"
         end
         raise AccessTokenExpiredError if result.token_expired?
         result
