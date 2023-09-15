@@ -99,7 +99,7 @@ module Wework
         private
 
         def send_msg(options = {})
-          post('/kf/send_msg', options.compact)
+          post('kf/send_msg', options.compact)
         end
       end
     end
