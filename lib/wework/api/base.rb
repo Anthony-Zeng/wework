@@ -12,6 +12,7 @@ module Wework
       include Methods::Batch
       include Methods::Kf
       include Methods::KfChat
+      include Methods::ExternalContact
 
       attr_accessor :corp_id, :secret, :options
 
