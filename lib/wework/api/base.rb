@@ -13,6 +13,7 @@ module Wework
       include Methods::Kf
       include Methods::KfChat
       include Methods::ExternalContact
+      include Methods::IdConvert
 
       attr_accessor :corp_id, :secret, :options
 
