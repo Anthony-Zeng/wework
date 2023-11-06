@@ -6,10 +6,11 @@ module Wework
 
       include Wework::Cipher
       include Methods::Service
+      include Methods::IdConvert
 
       attr_reader :encoding_aes_key, :suite_id, :suite_secret, :suite_token, :token
 
-      def initialize(options={})
+      def initialize(options = {})
         @suite_id = options.delete(:suite_id)
         @suite_secret = options.delete(:suite_secret)
         @token = @suite_token = options.delete(:suite_token)
@@ -29,10 +30,14 @@ module Wework
         Wework::Api::Corp.new(suite: self, corp_id: corp_id, permanent_code: permanent_code)
       end
 
+      def agent_construction(corp_id, permanent_code)
+        Wework::Api::Base.new(corp_id: corp_id, secret: permanent_code)
+      end
+
       private
 
       def token_params
-        {suite_access_token: access_token}
+        { suite_access_token: access_token }
       end
 
       def ticket_key
