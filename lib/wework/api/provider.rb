@@ -1,8 +1,10 @@
 module Wework
   module Api
     class Provider < Base
-      include Methods::Provider
       include Wework::Cipher
+
+      include Methods::Provider
+      include Methods::License
 
       attr_reader :encoding_aes_key, :token
 
