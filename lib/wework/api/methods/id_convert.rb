@@ -1,6 +1,6 @@
 # @author anthony
 # @date  2023/11/3
-# @desc 
+# @desc
 
 module Wework
   module Api
@@ -14,6 +14,13 @@ module Wework
 
         def convert_user_id(id_list)
           post 'batch/userid_to_openuserid', { userid_list: id_list }
+        end
+
+        def convert_group_external_userid(chat_id, id_list)
+          post 'externalcontact/groupchat/get_new_external_userid', {
+            chat_id: chat_id,
+            external_userid_list: id_list
+          }
         end
 
       end
